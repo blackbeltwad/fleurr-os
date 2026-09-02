@@ -1,0 +1,33 @@
+#ifndef FLEURR_TASK_H
+#define FLEURR_TASK_H
+
+#include "status.h"
+#include <stdint.h>
+
+// Opaque pointer
+typedef struct task task_t;
+typedef task_t *task_handle_t;
+
+// Sized-but-opaque storage for static allocation. TASK_STATIC_SIZE must be
+// kept >= sizeof(struct task) the kernel asserts this at build time.
+#define TASK_STATIC_SIZE 64
+// Placeholder value above always verify when modifying task
+typedef struct {
+  uint8_t _reserved[TASK_STATIC_SIZE];
+} task_static_t;
+
+fleurr_status_t task_create(task_handle_t *out, void (*entry)(void *),
+                            uint8_t priority, void *arg);
+
+fleurr_status_t task_create_static(task_handle_t *out, void (*entry)(void *),
+                                   uint8_t priority, void *arg,
+                                   task_static_t *storage);
+
+void task_yield(void);
+void task_block(task_handle_t task);
+void task_unblock(task_handle_t task);
+void task_sleep(double time_ms);
+void set_priority(task_handle_t task, uint8_t priority);
+task_handle_t get_current_task(void);
+
+#endif // FLEURR_TASK_H

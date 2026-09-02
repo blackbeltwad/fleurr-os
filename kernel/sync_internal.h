@@ -1,0 +1,24 @@
+#ifndef FLEURR_SYNC_INTERNAL_H
+#define FLEURR_SYNC_INTERNAL_H
+
+// Private — only included by kernel/*.c.
+
+#include "fleurr/config.h"
+#include "fleurr/sync.h"
+#include "task_internal.h"
+#include <stdint.h>
+
+struct mutex {
+  struct task *owner;
+  struct task *block_list[MAX_STACKS];
+  uint8_t block_index;
+  mutex_protocol_t protocol;
+  uint8_t ceiling_priority; // only meaningful if protocol == PROTOCOL_CEILING
+};
+
+struct semaphore {
+  // TODO: not yet implemented
+  uint8_t count;
+};
+
+#endif // FLEURR_SYNC_INTERNAL_H

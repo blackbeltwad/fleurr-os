@@ -1,0 +1,54 @@
+fleurr-os/
+├── README.md
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── adr/                        # architecture decision records, added as needed
+│   └── debugging/                  # write-ups, before/after bug demos
+│
+├── include/                        # PUBLIC headers — safe for user application code
+│   └── fleurr/
+│       ├── task.h                  # task_handle_t, task_static_t, task_create(), etc.
+│       ├── sync.h                  # mutex_handle_t, sem_handle_t, protocol enum
+│       ├── scheduler.h             # scheduler_start(), public-facing only
+│       ├── queue.h                 # (once built)
+│       ├── status.h                # fleurr_status_t
+│       └── config.h                # user-tunable compile-time config (MAX_STACKS, etc.)
+│
+├── kernel/                         # PRIVATE — portable kernel logic, arch-independent
+│   ├── task_internal.h             # real struct task — never exposed to include/
+│   ├── task.c
+│   ├── sync_internal.h             # real struct mutex/sem
+│   ├── mutex.c
+│   ├── semaphore.c                 # (once built)
+│   ├── scheduler_internal.h
+│   └── scheduler.c
+│
+├── arch/                           # everything that differs per chip/architecture
+│   ├── avr/
+│   │   ├── atmega328p/
+│   │   │   ├── context_switch.S    # your hand-written push/pop ISR
+│   │   │   ├── timer.c / timer.h
+│   │   │   └── port.h              # arch-specific bits kernel/ code calls into
+│   │   └── README.md               # AVR-specific notes (POP_SIZE derivation, etc.)
+│   └── cortex_m7/
+│       └── nucleo_f767zi/
+│           ├── pendsv.S            # PendSV handler
+│           ├── mpu.c / mpu.h
+│           ├── systick.c
+│           └── port.h
+│
+├── drivers/                        # interrupt-driven, RTOS-integrated
+│   ├── uart/
+│   ├── i2c/
+│   ├── spi/
+│   ├── gy521/
+│   ├── ds1307/
+│   ├── i2c_lcd/
+│   ├── sd_spi/
+│   └── oled_spi/
+│
+├── examples/                       # main.c-style demo apps per board
+│   ├── avr_led_blink/
+│   └── f767zi_led_blink/
+│
+└── tests/                          # if/when you add any (unit tests for e.g. mutex logic)

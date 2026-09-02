@@ -1,0 +1,11 @@
+#ifndef FLEURR_STATUS_H
+#define FLEURR_STATUS_H
+
+typedef enum {
+  FLEURR_OK = 0,
+  FLEURR_ERR_NOMEM,
+  FLEURR_ERR_INVALID_ARG,
+  FLEURR_ERR_LIMIT_REACHED,
+} fleurr_status_t;
+
+#endif // FLEURR_STATUS_H
