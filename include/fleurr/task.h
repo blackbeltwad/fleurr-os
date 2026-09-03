@@ -10,7 +10,7 @@ typedef task_t *task_handle_t;
 
 // Sized-but-opaque storage for static allocation. TASK_STATIC_SIZE must be
 // kept >= sizeof(struct task) the kernel asserts this at build time.
-#define TASK_STATIC_SIZE 64
+#define TASK_STATIC_SIZE 144
 // Placeholder value above always verify when modifying task
 typedef struct {
   uint8_t _reserved[TASK_STATIC_SIZE];
@@ -26,7 +26,7 @@ fleurr_status_t task_create_static(task_handle_t *out, void (*entry)(void *),
 void task_yield(void);
 void task_block(task_handle_t task);
 void task_unblock(task_handle_t task);
-void task_sleep(double time_ms);
+void task_sleep(uint32_t time_ms);
 void set_priority(task_handle_t task, uint8_t priority);
 task_handle_t get_current_task(void);
 

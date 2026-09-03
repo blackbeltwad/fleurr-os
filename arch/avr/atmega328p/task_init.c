@@ -13,15 +13,15 @@ void port_init_stack_frame(uint8_t **stack_pointer, void (*entry_point)(void *),
 
   **stack_pointer = entry_point_low_byte;
   // We pushed a byte so we DECREMENT
-  stack_pointer--;
+  (*stack_pointer)--;
   **stack_pointer = entry_point_high_byte;
 
-  stack_pointer -= ARG_SIZE;
+  (*stack_pointer) -= ARG_SIZE;
   // Inside R24
   **stack_pointer = entry_arg_low_byte;
   // Inside R25
-  stack_pointer--;
+  (*stack_pointer)--;
   **stack_pointer = entry_arg_high_byte;
-  stack_pointer += ARG_SIZE + 1;
-  stack_pointer -= POP_SIZE;
+  (*stack_pointer) += ARG_SIZE + 1;
+  (*stack_pointer) -= POP_SIZE;
 }

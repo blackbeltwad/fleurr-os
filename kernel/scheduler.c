@@ -21,7 +21,6 @@ static struct scheduler scheduler = {
 uint16_t store_and_pop_stack_pointer(uint16_t stack_address) {
 
   scheduler.current_task->stack_pointer = (uint8_t *)stack_address;
-  /*
   if (scheduler.total_tasks == scheduler.task_index) {
     scheduler.task_index = 0;
   } else {
@@ -30,8 +29,7 @@ uint16_t store_and_pop_stack_pointer(uint16_t stack_address) {
 
   //  Prepare current task for pop
   scheduler.current_task = scheduler.tasks[scheduler.task_index];
-  */
-  scheduler.current_task = select_next_task();
+  // scheduler.current_task = select_next_task();
   return (uint16_t)(scheduler.current_task->stack_pointer);
 }
 // Get the function address at the start of the tasks stack and call it
@@ -93,6 +91,8 @@ void scheduler_start(uint32_t time_ms) {
   scheduler.current_task = scheduler.tasks[highest_priority_task_index];
   port_timer_init(time_ms);
   port_start_first_task();
+  while (1) {
+  };
 }
 
 void update_sleep_timer() {

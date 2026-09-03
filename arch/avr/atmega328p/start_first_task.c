@@ -3,8 +3,8 @@
 #include "scheduler_internal.h"
 #include <avr/common.h>
 #include <avr/io.h>
-#define SPH (*(volatile char *)0x5E)
-void port_stack_allign() {
+#define SPH (*(volatile unsigned char *)0x5E)
+void port_start_first_task() {
   volatile uint8_t *stack_pointer = get_current_task()->stack_pointer;
   stack_pointer += POP_SIZE;
 

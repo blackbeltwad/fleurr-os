@@ -22,6 +22,7 @@ void port_timer_init(uint32_t interval_us) {
   OCR1AH = (OCR1A_value >> 8);
   OCR1AL = (OCR1A_value & 0x00FF);
 
+  SREG &= ~(1 << 7);
   // Set the interrupts on OCR0A match
   TIMSK1 |= (1 << 1);
   TIFR1 |= (1 << 1);

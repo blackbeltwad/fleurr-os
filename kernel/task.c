@@ -15,7 +15,7 @@
 fleurr_status_t task_create_static(task_handle_t *out, void (*entry)(void *),
                                    uint8_t priority, void *arg,
                                    task_static_t *storage) {
-  task_t *this_task = (task_t *)(&storage);
+  task_t *this_task = (task_t *)(storage);
   *out = this_task;
   this_task->stack_pointer = &this_task->stack[MAX_SIZE - 1];
   this_task->stack[0] = 0xFF;
@@ -32,3 +32,20 @@ fleurr_status_t task_create_static(task_handle_t *out, void (*entry)(void *),
 }
 
 void task_yield() { port_force_context_switch(); }
+
+void task_block(task_handle_t task) { task->state = TASK_BLOCKED; }
+
+void task_unblock(task_handle_t task) { task->state = TASK_READY; }
+
+void task_sleep(uint32_t time_ms) {
+  port_disable_interrupt();
+  task_t *this_task = get_current_task();
+  this_task->sleep_remaining = time_ms;
+  port_enable_interrupt();
+}
+
+void set_priority(task_handle_t task, uint8_t priority) {
+  port_disable_interrupt();
+  task->priority = priority;
+  port_enable_interrupt();
+}
