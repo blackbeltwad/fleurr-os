@@ -5,6 +5,7 @@
 #include "scheduler_internal.h"
 #include "task_internal.h"
 #include <stddef.h>
+#include <stdint.h>
 
 // TODO: move existing task_create / task_yield / task_block / task_unblock /
 // task_sleep / set_priority / get_current_task bodies here, adapted to:
@@ -38,14 +39,14 @@ void task_block(task_handle_t task) { task->state = TASK_BLOCKED; }
 void task_unblock(task_handle_t task) { task->state = TASK_READY; }
 
 void task_sleep(uint32_t time_ms) {
-  port_disable_interrupt();
+  uint8_t old_state = port_enter_critcal();
   task_t *this_task = get_current_task();
   this_task->sleep_remaining = time_ms;
-  port_enable_interrupt();
+  port_exit_crital(old_state);
 }
 
 void set_priority(task_handle_t task, uint8_t priority) {
-  port_disable_interrupt();
+  uint8_t old_state = port_enter_critcal();
   task->priority = priority;
-  port_enable_interrupt();
+  port_exit_crital(old_state);
 }

@@ -11,4 +11,8 @@
 #define MAX_SIZE 128 // per-task stack size, in bytes
 #endif
 
+#ifndef PORT_MAX_INTERRUPT_PRIORITY
+#define PORT_MAX_INTERRUPT_PRIORITY 6UL
+#endif
+
 #endif // FLEURR_CONFIG_H

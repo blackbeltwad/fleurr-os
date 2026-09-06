@@ -1,6 +1,11 @@
 #include "avr/io.h"
 #include "port.h"
+#include <stdint.h>
 
-void port_enable_interrupt() { SREG |= (1 << 7); }
+void port_exit_crital(uint8_t old_state) { SREG = old_state; }
 
-void port_disable_interrupt() { SREG &= ~(1 << 7); }
+uint8_t port_enter_critcal(void) {
+  uint8_t old_state = SREG;
+  SREG &= ~(1 << 7);
+  return old_state;
+}
