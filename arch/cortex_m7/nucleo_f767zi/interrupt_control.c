@@ -21,5 +21,5 @@ void port_exit_crital(uint8_t old_state) {
                    "dsb \n"
                    :
                    : "r"(old_state)
-                   :);
+                   : "memory");
 }

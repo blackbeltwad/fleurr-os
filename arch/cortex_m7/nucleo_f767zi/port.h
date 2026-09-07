@@ -1,7 +1,7 @@
 #ifndef FLEURR_PORT_CORTEX_M7_NUCLEO_F767ZI_H
 #define FLEURR_PORT_CORTEX_M7_NUCLEO_F767ZI_H
-#define POP_SIZE 34
-#define ARG_SIZE 25
+#define POP_SIZE 12
+#define ARG_SIZE 13
 // Arch-specific interface that kernel/*.c calls into. Keeps
 // kernel/scheduler.c free of #ifdefs for arch-specific behavior.
 #include <stdint.h>
