@@ -5,10 +5,8 @@
 uint8_t port_enter_critcal() {
   uint8_t old_state = 0;
   __asm__ volatile("mrs %0, basepri \n"
-                   "isb \n"
                    "msr basepri, %1 \n"
                    "isb \n"
-                   "dsb \n"
                    : "=r"(old_state)
                    : "r"(PORT_MAX_INTERRUPT_PRIORITY)
                    : "memory");
@@ -16,9 +14,8 @@ uint8_t port_enter_critcal() {
 }
 
 void port_exit_crital(uint8_t old_state) {
-  __asm__ volatile("msr barepri, %0 \n"
-                   "isr \n"
-                   "dsb \n"
+  __asm__ volatile("msr basepri, %0 \n"
+                   "isb \n"
                    :
                    : "r"(old_state)
                    : "memory");

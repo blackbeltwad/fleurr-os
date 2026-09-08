@@ -19,6 +19,7 @@ GDB_PORT = 1234
 
 else ifeq ($(TARGET), cortex_m7)
 CC       = arm-none-eabi-gcc
+GDB      = arm-none-eabi-gdb
 OBJCOPY  = arm-none-eabi-objcopy
 MCU_FLAGS = -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-d16
 CFLAGS   = $(MCU_FLAGS) -O0 -g3 -Wall -Wextra -std=gnu11
@@ -26,15 +27,16 @@ LDFLAGS  = $(MCU_FLAGS) -T arch/cortex_m7/nucleo_f767zi/linker.ld -nostdlib
 INCLUDES = -Iinclude -Ikernel -Iarch/cortex_m7/nucleo_f767zi
 ARCH_DIR = arch/cortex_m7/nucleo_f767zi
 EXAMPLE_DIR = examples/cortex_m7_led_blink
-SRCS = $(wildcard kernel/*.c) $(wildcard $(ARCH_DIR)/*.c) $(wildcard $(ARCH_DIR)/*.s) $(wildcard $(EXAMPLE_DIR)/*.c)
+SRCS = $(wildcard kernel/*.c) $(wildcard $(ARCH_DIR)/*.c) $(wildcard $(ARCH_DIR)/*.S) $(wildcard $(EXAMPLE_DIR)/*.c)
 OUT = $(BUILD_DIR)/fleurr_m7.elf
 BIN = $(BUILD_DIR)/fleurr_m7.bin
+GDB_PORT = 3333
 
 else
 $(error Unknown TARGET '$(TARGET)'. Use TARGET=avr or TARGET=cortex_m7)
 endif
 
-.PHONY: build flash clean simavr gdb
+.PHONY: build flash clean simavr openocd gdb
 
 build: $(SRCS)
 	@mkdir -p $(BUILD_DIR)
@@ -54,16 +56,24 @@ else ifeq ($(TARGET), cortex_m7)
 		-c "program $(OUT) verify reset exit"
 endif
 
-# Runs the elf under simavr with a gdb server, paused at reset until gdb
-# attaches. Leave this running in one terminal, then `make gdb` in another.
-# (AVR only.)
 simavr: build
 	simavr -m $(MCU) -f $(F_CPU) -g $(OUT)
 
-# Connects avr-gdb to the simavr gdb server started by `make simavr`.
-# (AVR only.)
+# Runs OpenOCD debug server for the Cortex-M7 target
+openocd:
+	openocd -f interface/stlink.cfg -f target/stm32f7x.cfg
+
 gdb: build
+ifeq ($(TARGET), avr)
 	avr-gdb $(OUT) -ex "target remote localhost:$(GDB_PORT)"
+else ifeq ($(TARGET), cortex_m7)
+	$(GDB) $(OUT) \
+		-ex "target remote localhost:$(GDB_PORT)" \
+		-ex "monitor reset halt" \
+		-ex "load" \
+		-ex "break main" \
+		-ex "continue"
+endif
 
 clean:
 	rm -rf $(BUILD_DIR)

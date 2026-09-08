@@ -1,6 +1,10 @@
 #include <stdint.h>
-
-// 1. Core Default Trap Function
+extern int main(void);
+void Reset_Handler(void) {
+  main();
+  while (1) {
+  };
+}
 void Default_Handler(void) {
   while (1)
     ; // Trap CPU on unexpected interrupt

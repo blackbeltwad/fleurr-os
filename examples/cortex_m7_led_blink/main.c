@@ -1,0 +1,60 @@
+#include "fleurr/scheduler.h"
+#include "fleurr/task.h"
+#include <stddef.h>
+#include <stdint.h>
+
+void red_led(void *arg);
+void white_led(void *arg);
+void blue_led(void *arg);
+void set_only_pin(uint8_t pin);
+
+#define RCC_BASE (0x40023800UL)
+#define RCC_AHB1ENR (*(volatile uint32_t *)(RCC_BASE + 0x30))
+
+#define GPIOD_BASE (0x40020C00UL)
+#define GPIOD_MODER (*(volatile uint32_t *)(GPIOD_BASE + 0x00))
+#define GPIOD_ODR (*(volatile uint32_t *)(GPIOD_BASE + 0x14))
+
+static task_static_t task_a_storage;
+static task_static_t task_b_storage;
+static task_static_t task_c_storage;
+
+int main(void) {
+  RCC_AHB1ENR |= (1U << 3);
+
+  GPIOD_MODER &= ~((3U << (3 * 2)) | (3U << (4 * 2)) | (3U << (5 * 2)));
+  GPIOD_MODER |= ((1U << (3 * 2)) | (1U << (4 * 2)) | (1U << (5 * 2)));
+
+  task_handle_t task_a;
+  task_handle_t task_b;
+  task_handle_t task_c;
+
+  task_create_static(&task_a, &red_led, 1, NULL, &task_a_storage);
+  task_create_static(&task_b, &white_led, 1, NULL, &task_b_storage);
+  task_create_static(&task_c, &blue_led, 1, NULL, &task_c_storage);
+
+  scheduler_start(200); // never returns
+}
+
+void red_led(void *arg) {
+  while (1) {
+    set_only_pin(5); // PD5
+  }
+}
+
+void white_led(void *arg) {
+  while (1) {
+    set_only_pin(4); // PD4
+  }
+}
+
+void blue_led(void *arg) {
+  while (1) {
+    set_only_pin(3); // PD3
+  }
+}
+
+void set_only_pin(uint8_t pin) {
+  uint32_t mask = (1U << 3) | (1U << 4) | (1U << 5);
+  GPIOD_ODR = (GPIOD_ODR & ~mask) | (1U << pin);
+}

@@ -8,7 +8,13 @@
 #endif
 
 #ifndef MAX_SIZE
-#define MAX_SIZE 128 // per-task stack size, in bytes
+#define MAX_SIZE 256 // per-task stack size, in bytes
+#endif
+
+// Sized-but-opaque storage for static allocation. TASK_STATIC_SIZE must be
+// kept >= sizeof(struct task) the kernel asserts this at build time.
+#ifndef TASK_STATIC_SIZE
+#define TASK_STATIC_SIZE 280
 #endif
 
 #ifndef PORT_MAX_INTERRUPT_PRIORITY

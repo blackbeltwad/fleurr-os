@@ -1,6 +1,7 @@
 #ifndef FLEURR_TASK_H
 #define FLEURR_TASK_H
 
+#include "config.h"
 #include "status.h"
 #include <stdint.h>
 
@@ -8,9 +9,6 @@
 typedef struct task task_t;
 typedef struct task *task_handle_t;
 
-// Sized-but-opaque storage for static allocation. TASK_STATIC_SIZE must be
-// kept >= sizeof(struct task) the kernel asserts this at build time.
-#define TASK_STATIC_SIZE 144
 // Placeholder value above always verify when modifying task
 typedef struct {
   uint8_t _reserved[TASK_STATIC_SIZE];
