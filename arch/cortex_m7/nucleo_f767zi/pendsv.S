@@ -8,6 +8,9 @@
 .extern update_sleep_timer
 
 PendSV_Handler:
+  mrs R0, CONTROL
+  ORR R0, R0, #(1 << 1)
+  msr CONTROL, R0
   push R4
   push R5
   push R6
@@ -45,9 +48,4 @@ PendSV_Handler:
   pop R6
   pop R5
   pop R4
-  pop R0 
-  pop R1 
-  pop R2 
-  pop R3
-  
-  
+  bx lr

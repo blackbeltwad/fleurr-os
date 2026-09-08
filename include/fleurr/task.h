@@ -6,7 +6,7 @@
 
 // Opaque pointer
 typedef struct task task_t;
-typedef task_t *task_handle_t;
+typedef struct task *task_handle_t;
 
 // Sized-but-opaque storage for static allocation. TASK_STATIC_SIZE must be
 // kept >= sizeof(struct task) the kernel asserts this at build time.
