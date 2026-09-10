@@ -13,7 +13,7 @@ EXAMPLE_DIR = examples/avr_led_blink
 SRCS = $(wildcard kernel/*.c) $(wildcard $(ARCH_DIR)/*.c) $(wildcard $(ARCH_DIR)/*.S) $(wildcard $(EXAMPLE_DIR)/*.c)
 OUT = $(BUILD_DIR)/fleurr_avr.elf
 HEX = $(BUILD_DIR)/fleurr_avr.hex
-PORT = /dev/cu.usbmodem101
+PORT = /dev/cu.usbmodem1101
 BAUD = 115200
 GDB_PORT = 1234
 
