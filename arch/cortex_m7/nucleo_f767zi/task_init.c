@@ -6,31 +6,28 @@ void port_init_stack_frame(uint8_t **stack_pointer, void (*entry)(void *),
 
   uint32_t initial_xpsr = 0x01000000;
   uint32_t task_pc = (uint32_t)entry;
-  uint32_t task_lr = 0xFFFFFFFFL;
+  uint32_t task_lr = 0xFFFFFFFF;
   uint32_t fluff = 0x00000000;
-  uint32_t push_reg = 0;
   uint32_t arg_value = (uint32_t)(arg);
 
   *stack_pointer -= WORD_SIZE;
-  *(uint32_t *)*stack_pointer = (uint32_t)entry;
-  __asm__ volatile("stmdb %[psp]!, {%[xpsr]}  \n"
-                   "stmdb %[psp]!, {%[pc]}    \n"
-                   "stmdb %[psp]!, {%[lr]}    \n"
-                   "stmdb %[psp]!, {%[fl]}    \n"
-                   "stmdb %[psp]!, {%[fl]}    \n"
-                   "stmdb %[psp]!, {%[fl]}    \n"
-                   "stmdb %[psp]!, {%[fl]}    \n"
-                   "stmdb %[psp]!, {%[arg]}   \n"
+  *(uint32_t *)*stack_pointer = initial_xpsr;
+  *stack_pointer -= WORD_SIZE;
+  *(uint32_t *)*stack_pointer = task_pc;
+  *stack_pointer -= WORD_SIZE;
+  *(uint32_t *)*stack_pointer = task_lr;
 
-                   "msr   psp, %[psp]         \n"
-                   "mrs   %[scratch], control \n"
-                   "orr   %[scratch], %[scratch], #2 \n"
-                   "msr   control, %[scratch] \n"
-                   "isb                       \n"
+  *stack_pointer -= WORD_SIZE;
+  *(uint32_t *)*stack_pointer = fluff;
+  *stack_pointer -= WORD_SIZE;
+  *(uint32_t *)*stack_pointer = fluff;
+  *stack_pointer -= WORD_SIZE;
+  *(uint32_t *)*stack_pointer = fluff;
+  *stack_pointer -= WORD_SIZE;
+  *(uint32_t *)*stack_pointer = fluff;
 
-                   : [psp] "+&r"(*stack_pointer), [scratch] "=&r"(push_reg)
-                   : [xpsr] "r"(initial_xpsr), [pc] "r"(task_pc),
-                     [lr] "r"(task_lr), [arg] "r"(arg_value), [fl] "r"(fluff)
-                   : "memory");
+  *stack_pointer -= WORD_SIZE;
+  *(uint32_t *)*stack_pointer = arg_value;
+
   *stack_pointer -= POP_SIZE;
 }

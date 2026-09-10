@@ -2,17 +2,38 @@
 extern int main(void);
 extern uint32_t _estack;
 void Default_Handler();
-void Reset_Handler(void) {
-  // Set psp to top of dtcm like
-  __asm__ volatile("msr psp, %0" : : "r"(&_estack));
 
-  __asm__ volatile("mrs r0, control \n"
-                   "orr r0, r0, #2  \n"
-                   "msr control, r0 \n"
-                   "isb             \n" ::
-                       : "r0", "memory");
+extern uint32_t _sidata;
+extern uint32_t _sdata;
+extern uint32_t _edata;
+extern uint32_t _sbss;
+extern uint32_t _ebss;
+extern uint32_t _estack;
+
+void Reset_Handler(void) {
+  // Copy .data section from Flash to RAM
+  uint32_t *src = &_sidata;
+  uint32_t *dst = &_sdata;
+  while (dst < &_edata) {
+    *dst++ = *src++;
+  }
+
+  // Zero initialize .bss section in RAM
+  dst = &_sbss;
+  while (dst < &_ebss) {
+    *dst++ = 0;
+  }
+
+  //  Set PSP and CONTROL register, then launch main
+  __asm volatile("msr PSP, %0 \n"
+                 "mrs r0, CONTROL \n"
+                 "orr r0, r0, #2 \n"
+                 "msr CONTROL, r0 \n"
+                 "isb \n" ::"r"(0x2001FFA0)
+                 : "r0");
 
   main();
+
   while (1)
     ;
 }

@@ -14,9 +14,6 @@ struct task *select_next_task(void);
 static struct scheduler scheduler = {
     .tasks = {0}, .current_task = NULL, .task_index = -1, .total_tasks = -1};
 
-// TODO: move existing select_next_task / store_and_pop_stack_pointer /
-// update_sleep_timer / scheduler_start bodies here.
-
 void *store_and_pop_stack_pointer(void *stack_address) {
 
   scheduler.current_task->stack_pointer = stack_address;
@@ -78,7 +75,7 @@ struct task *select_next_task() {
 void scheduler_start(uint32_t time_ms) {
   uint8_t highest_priority = 0;
   uint8_t highest_priority_task_index = 0;
-  for (int i = 0; i < scheduler.total_tasks + 1; i++) {
+  for (int i = 0; i < scheduler.total_tasks; i++) {
     struct task *this_task = scheduler.tasks[i];
     if (this_task->state == TASK_READY &&
         this_task->priority >= highest_priority) {
