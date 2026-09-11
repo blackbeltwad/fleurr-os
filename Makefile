@@ -70,9 +70,7 @@ else ifeq ($(TARGET), cortex_m7)
 	$(GDB) $(OUT) \
 		-ex "target remote localhost:$(GDB_PORT)" \
 		-ex "monitor reset halt" \
-		-ex "load" \
-		-ex "break main" \
-		-ex "continue"
+		-ex "load" 
 endif
 
 clean:

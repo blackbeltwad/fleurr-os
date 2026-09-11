@@ -10,7 +10,7 @@
 void port_start_first_task() {
   uint8_t *stack_pointer = get_current_task()->stack_pointer;
 
-  stack_pointer += POP_SIZE;
+  stack_pointer += INIT_POP;
 
   uint32_t function_address = *(uint32_t *)stack_pointer;
   void (*start_function)(void *) = (void *)function_address;

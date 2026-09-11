@@ -1,6 +1,5 @@
 #include "port.h"
 #include <stdint.h>
-#define WORD_SIZE 4
 void port_init_stack_frame(uint8_t **stack_pointer, void (*entry)(void *),
                            void *arg) {
 
@@ -10,7 +9,7 @@ void port_init_stack_frame(uint8_t **stack_pointer, void (*entry)(void *),
   uint32_t fluff = 0x00000000;
   uint32_t arg_value = (uint32_t)(arg);
 
-  *stack_pointer -= WORD_SIZE;
+  *stack_pointer -= ALLIGN_IT;
   *(uint32_t *)*stack_pointer = initial_xpsr;
   *stack_pointer -= WORD_SIZE;
   *(uint32_t *)*stack_pointer = task_pc;

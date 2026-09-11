@@ -75,7 +75,7 @@ struct task *select_next_task() {
 void scheduler_start(uint32_t time_ms) {
   uint8_t highest_priority = 0;
   uint8_t highest_priority_task_index = 0;
-  for (int i = 0; i < scheduler.total_tasks; i++) {
+  for (int i = 0; i < scheduler.total_tasks + 1; i++) {
     struct task *this_task = scheduler.tasks[i];
     if (this_task->state == TASK_READY &&
         this_task->priority >= highest_priority) {
