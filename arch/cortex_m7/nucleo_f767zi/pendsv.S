@@ -1,6 +1,22 @@
-// PendSV_Handler — context switch entry point.
-// TODO: implement using MSP/PSP dual-stack model and EXC_RETURN.
-
 .syntax unified
-.thumb
+    .cpu cortex-m7
+    .thumb
+
 .global PendSV_Handler
+.type PendSV_Handler, %function
+PendSV_Handler:
+    mrs r0, psp
+
+    stmdb r0!, {r4-r11}
+
+    push {r4, lr}
+
+    bl store_and_pop_stack_pointer
+
+    pop {r4, lr}
+
+    ldmia r0!, {r4-r11}
+
+    msr psp, r0
+
+    bx lr

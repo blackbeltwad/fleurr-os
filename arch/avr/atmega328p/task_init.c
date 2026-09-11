@@ -11,6 +11,10 @@ void port_init_stack_frame(uint8_t **stack_pointer, void (*entry_point)(void *),
   uint8_t entry_arg_high_byte = entry_arg_address >> 8;
   uint8_t entry_arg_low_byte = entry_arg_address & 0x00FF;
 
+  // Low byte goes first despite endianess, because the calling convention is
+  // high byte (r25) low byte (r24)
+  // Were setting each up each stack frame as if it was being popped first
+  // SREG -> R31-> R30 -> R29 -> R28 -> R27 -> R26 -> R25 -> R24 -> ... R0
   **stack_pointer = entry_point_low_byte;
   // We pushed a byte so we DECREMENT
   (*stack_pointer)--;

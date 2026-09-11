@@ -13,7 +13,7 @@ struct scheduler {
 };
 
 // Private methods shared across kernel/*.c
-uint16_t store_and_pop_stack_pointer(uint16_t stack_address);
+void *store_and_pop_stack_pointer(void *stack_address);
 void update_sleep_timer(void);
 void fill_task(task_t *this_task);
 struct task *select_next_task(void);

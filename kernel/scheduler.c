@@ -7,7 +7,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-uint16_t store_and_pop_stack_pointer(uint16_t stack_address);
 void update_sleep_timer(void);
 struct task *select_next_task(void);
 // Start before the first valid index; task_create() increments before use.
@@ -15,12 +14,9 @@ struct task *select_next_task(void);
 static struct scheduler scheduler = {
     .tasks = {0}, .current_task = NULL, .task_index = -1, .total_tasks = -1};
 
-// TODO: move existing select_next_task / store_and_pop_stack_pointer /
-// update_sleep_timer / scheduler_start bodies here.
+void *store_and_pop_stack_pointer(void *stack_address) {
 
-uint16_t store_and_pop_stack_pointer(uint16_t stack_address) {
-
-  scheduler.current_task->stack_pointer = (uint8_t *)stack_address;
+  scheduler.current_task->stack_pointer = stack_address;
   if (scheduler.total_tasks == scheduler.task_index) {
     scheduler.task_index = 0;
   } else {
@@ -30,7 +26,7 @@ uint16_t store_and_pop_stack_pointer(uint16_t stack_address) {
   //  Prepare current task for pop
   scheduler.current_task = scheduler.tasks[scheduler.task_index];
   // scheduler.current_task = select_next_task();
-  return (uint16_t)(scheduler.current_task->stack_pointer);
+  return (void *)(scheduler.current_task->stack_pointer);
 }
 // Get the function address at the start of the tasks stack and call it
 struct task *select_next_task() {

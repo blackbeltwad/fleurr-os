@@ -3,6 +3,7 @@
 #include "scheduler_internal.h"
 #include <avr/common.h>
 #include <avr/io.h>
+#include <stdint.h>
 #define SPH (*(volatile unsigned char *)0x5E)
 void port_start_first_task() {
   volatile uint8_t *stack_pointer = get_current_task()->stack_pointer;
@@ -15,7 +16,7 @@ void port_start_first_task() {
   uint16_t function_address =
       ((uint16_t)function_address_high_byte << 8) | function_address_low_byte;
 
-  void (*start_function)(void) = (void (*)(void))function_address;
+  void (*start_function)(void *) = (void (*)(void *))function_address;
 
   uint16_t stack_pointer_high_address = (uint16_t)stack_pointer >> 8;
   uint16_t stack_pointer_low_address = (uint16_t)stack_pointer & 0x00FF;
@@ -25,5 +26,5 @@ void port_start_first_task() {
   SPL = (uint8_t)stack_pointer_low_address;
 
   SREG |= (1 << 7);
-  start_function();
+  start_function(get_current_task()->task_arg);
 }
