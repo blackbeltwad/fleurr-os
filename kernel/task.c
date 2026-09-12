@@ -50,3 +50,6 @@ void set_priority(task_handle_t task, uint8_t priority) {
   task->priority = priority;
   port_exit_crital(old_state);
 }
+
+uint8_t fleurr_enter_critical() { return port_enter_critcal(); }
+void fleurr_exit_critical(uint8_t old_state) { port_exit_crital(old_state); }

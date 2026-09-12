@@ -4,12 +4,11 @@
 #include "fleurr/config.h"
 #include "task_internal.h"
 #include <stddef.h>
-#include <stdint.h>
 struct scheduler {
-  struct task *tasks[MAX_STACKS];
+  struct task *heads[NUM_OF_PRIORITY];
+  struct task *tails[NUM_OF_PRIORITY];
   struct task *current_task;
-  int8_t task_index;
-  int8_t total_tasks;
+  uint32_t ready_bitmap;
 };
 
 // Private methods shared across kernel/*.c
